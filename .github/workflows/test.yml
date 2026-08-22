@@ -1,0 +1,61 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# The jobs read the repo and run checks; they publish nothing and comment
+# nowhere. Stated explicitly because the DEFAULT is whatever the repository
+# (or the org) has configured, which for many repos is write — and a workflow
+# that runs on `pull_request` executes a fork's package.json scripts.
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        # Oldest supported (engines: >=22 — the test glob needs 22) plus
+        # current, so an accidental dependency on newer-than-engines Node
+        # surfaces here instead of on a user's machine.
+        node: [22, 24]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci
+      # The suite needs no browser and no Godot by design — see README
+      # "Testing the harness itself". If a future test breaks that property,
+      # this job is where it gets caught.
+      - run: npm test
+
+  # The npm package ships four GDScript files as security-gated templates, and
+  # until this job existed CI never parsed a single one of them — a syntax
+  # error in a template would have shipped green. Version-pinned to what the
+  # harness is developed against; bump deliberately, not via "latest".
+  gdscript-check:
+    runs-on: ubuntu-latest
+    env:
+      GODOT_VERSION: 4.7.1
+    steps:
+      - uses: actions/checkout@v5
+      - name: Download Godot headless
+        run: |
+          curl -sSL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" godot-bin
+          chmod +x godot-bin
+      - name: Parse every shipped GDScript file
+        run: |
+          status=0
+          for f in godot/*.template.gd addons/playtest_bridge/*.gd; do
+            echo "--- $f"
+            if ! ./godot-bin --headless --check-only --script "$f"; then
+              status=1
+            fi
+          done
+          exit $status

@@ -1,0 +1,9 @@
+{
+	"name": "verify_boot",
+	"capture_boot": true,
+	"_note": "Round 3 verification. Both boot-screen plants must be visible in this frame before any role runs.",
+	"steps": [
+		{ "action": "wait", "ms": 1500 },
+		{ "action": "screenshot", "label": "boot_frame" }
+	]
+}

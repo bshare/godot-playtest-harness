@@ -1,0 +1,7 @@
+{
+  "name": "mcp_fixture_bad",
+  "steps": [
+    { "action": "no_such_action" },
+    { "action": "do_thing" }
+  ]
+}

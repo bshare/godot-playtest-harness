@@ -1,0 +1,30 @@
+{
+	"name": "verify_round2",
+	"stop_on_failure": false,
+	"_note": "Run against BOTH the planted subject and a clean control, then diff. Expected: P1 buggy ends off-map (3,-2) vs clean (3,1); P5 buggy needs bump 2 for dialogue, clean opens on bump 1; P2 buggy opponent 7->3 per hit vs clean 7->5.",
+	"steps": [
+		{ "action": "force_teleport_player", "args": { "cell_x": 3, "cell_y": 4 } },
+		{ "action": "move_player", "args": { "direction": "up" } },
+		{ "action": "move_player", "args": { "direction": "up" } },
+		{ "action": "move_player", "args": { "direction": "up" } },
+		{ "action": "move_player", "args": { "direction": "up" } },
+		{ "action": "move_player", "args": { "direction": "up" } },
+		{ "action": "move_player", "args": { "direction": "up" } },
+		{ "action": "dump_state", "label": "P1_after_6_up" },
+		{ "action": "force_teleport_player", "args": { "cell_x": 11, "cell_y": 7 } },
+		{ "action": "wait", "ms": 600 },
+		{ "action": "move_player", "args": { "direction": "right" } },
+		{ "action": "wait", "ms": 600 },
+		{ "action": "dump_state", "label": "P5_after_bump1" },
+		{ "action": "move_player", "args": { "direction": "right" } },
+		{ "action": "wait", "ms": 600 },
+		{ "action": "dump_state", "label": "P5_after_bump2" },
+		{ "action": "advance_dialogue" }, { "action": "wait", "ms": 500 },
+		{ "action": "advance_dialogue" }, { "action": "wait", "ms": 500 },
+		{ "action": "advance_dialogue" }, { "action": "wait", "ms": 1200 },
+		{ "action": "dump_state", "label": "combat_start", "screenshot_after": true },
+		{ "action": "combat_attack" },
+		{ "action": "wait", "ms": 900 },
+		{ "action": "dump_state", "label": "after_attack", "screenshot_after": true }
+	]
+}

@@ -1,0 +1,13 @@
+{
+	"name": "smoke",
+	"stop_on_failure": true,
+	"steps": [
+		{ "action": "dump_state", "label": "boot" },
+		{ "action": "assert_state", "args": { "path": "mode", "op": "==", "value": "EXPLORATION" }, "label": "starts_in_exploration" },
+		{ "action": "assert_state", "args": { "path": "player.cell_x", "op": "==", "value": 3 }, "label": "player_starts_at_cell_3_4" },
+		{ "action": "move_player", "args": { "direction": "right" }, "screenshot_after": true },
+		{ "action": "wait", "ms": 500 },
+		{ "action": "dump_state", "label": "after_move" },
+		{ "action": "assert_state", "args": { "path": "player.cell_x", "op": "==", "value": 4 }, "label": "player_moved_one_tile" }
+	]
+}

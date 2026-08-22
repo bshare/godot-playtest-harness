@@ -1,0 +1,7 @@
+{
+  "name": "mcp_fixture_good",
+  "steps": [
+    { "action": "dump_state", "label": "initial" },
+    { "action": "do_thing", "args": { "thing_id": "widget" } }
+  ]
+}

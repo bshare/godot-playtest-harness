@@ -1,0 +1,42 @@
+{
+	"catalog_version": 1,
+	"game": "dodge_the_creeps",
+	"state_schema_version": 1,
+	"actions": {
+		"start_game": {
+			"fn": "godotDebugStartGame",
+			"positional": [],
+			"required": [],
+			"optional": []
+		},
+		"move_player": {
+			"fn": "godotDebugMovePlayer",
+			"positional": [
+				{
+					"name": "x"
+				},
+				{
+					"name": "y"
+				}
+			],
+			"required": [
+				"x",
+				"y"
+			],
+			"optional": []
+		},
+		"force_hit": {
+			"fn": "godotDebugForceHit",
+			"positional": [],
+			"required": [],
+			"optional": []
+		},
+		"legal_moves": {
+			"fn": "godotDebugLegalMoves",
+			"positional": [],
+			"required": [],
+			"optional": []
+		}
+	},
+	"runner_actions": {}
+}

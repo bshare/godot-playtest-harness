@@ -1,0 +1,16 @@
+{
+  "catalog_version": 1,
+  "game": "mcp-fixture",
+  "actions": {
+    "do_thing": {
+      "fn": "godotDebugDoThing",
+      "positional": [{ "name": "thing_id" }],
+      "required": ["thing_id"],
+      "optional": []
+    }
+  },
+  "runner_actions": {
+    "dump_state": { "required": [], "optional": [] },
+    "screenshot": { "required": [], "optional": [] }
+  }
+}

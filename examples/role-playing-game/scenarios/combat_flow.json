@@ -1,0 +1,35 @@
+{
+	"name": "combat_flow",
+	"stop_on_failure": true,
+	"steps": [
+		{ "action": "dump_state", "label": "boot" },
+		{ "action": "force_teleport_player", "args": { "cell_x": 11, "cell_y": 7 } },
+		{ "action": "wait", "ms": 200 },
+		{ "action": "move_player", "args": { "direction": "right" }, "screenshot_after": true },
+		{ "action": "wait", "ms": 500 },
+		{ "action": "dump_state", "label": "bumped_opponent" },
+		{ "action": "assert_state", "args": { "path": "dialogue.visible", "op": "==", "value": true }, "label": "opponent_dialogue_opened" },
+
+		{ "action": "advance_dialogue" },
+		{ "action": "wait", "ms": 200 },
+		{ "action": "advance_dialogue" },
+		{ "action": "wait", "ms": 200 },
+		{ "action": "advance_dialogue" },
+		{ "action": "wait", "ms": 2500 },
+
+		{ "action": "dump_state", "label": "combat_started" },
+		{ "action": "assert_state", "args": { "path": "mode", "op": "==", "value": "COMBAT" }, "label": "entered_combat" },
+		{ "action": "assert_state", "args": { "path": "combat.active_combatant", "op": "==", "value": "Player" }, "label": "player_goes_first" },
+
+		{ "action": "combat_attack", "screenshot_after": true },
+		{ "action": "wait", "ms": 800 },
+		{ "action": "dump_state", "label": "after_attack" },
+		{ "action": "assert_state", "args": { "path": "combat.opponent.life", "op": "<", "value": 7 }, "label": "opponent_took_damage" },
+
+		{ "action": "force_win_combat" },
+		{ "action": "wait", "ms": 2500 },
+		{ "action": "dump_state", "label": "after_win" },
+		{ "action": "assert_state", "args": { "path": "mode", "op": "==", "value": "EXPLORATION" }, "label": "returned_to_exploration" },
+		{ "action": "assert_state", "args": { "path": "dialogue.visible", "op": "==", "value": true }, "label": "win_dialogue_shown" }
+	]
+}

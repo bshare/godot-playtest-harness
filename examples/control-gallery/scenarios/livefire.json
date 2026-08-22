@@ -1,0 +1,20 @@
+{
+  "name": "livefire",
+  "steps": [
+    { "action": "dump_controls", "label": "before" },
+    { "action": "set_slider", "args": { "path": "/root/ControlGallery/MainPanel/HSplitContainer/VSplitContainer/HSplitContainer/Numbers/VBoxContainer/HSliderContainer/HSlider", "value": 75 } },
+    { "action": "set_slider", "args": { "path": "/root/ControlGallery/MainPanel/HSplitContainer/VSplitContainer/HSplitContainer/Numbers/VBoxContainer/SpinBox", "value": 42 } },
+    { "action": "dump_controls", "label": "after_slider" },
+    { "action": "select_tab", "args": { "path": "/root/ControlGallery/MainPanel/HSplitContainer/BasicControls/VBoxContainer/TabContainer", "tab_index": 2 } },
+    { "action": "dump_controls", "label": "after_tab" },
+    { "action": "click_control", "args": { "path": "/root/ControlGallery/MainPanel/HSplitContainer/VSplitContainer/Lists/VBoxContainer/HBoxContainer/VBoxContainer/RadioButtons/CheckBox2" } },
+    { "action": "dump_controls", "label": "after_checkbox_click" },
+    { "action": "click_control", "args": { "path": "/root/ControlGallery/MainPanel/HSplitContainer/BasicControls/VBoxContainer/LineEdit" } },
+    { "action": "dump_controls", "label": "after_lineedit_focus_click" },
+    { "action": "send_key", "args": { "keycode": 65 } },
+    { "action": "send_key", "args": { "keycode": 65, "pressed": false } },
+    { "action": "send_key", "args": { "keycode": 66 } },
+    { "action": "send_key", "args": { "keycode": 66, "pressed": false } },
+    { "action": "dump_controls", "label": "after_typing", "screenshot_after": true }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "name": "godot-playtest-harness",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "Automated playtesting for Godot 4.x with verified verdicts: scenario runs with evidence bundles, seeded sim batches with determinism/isolation/parity checks, coverage that tells 'no findings' from 'never looked', driven through a debug-only bridge (web or desktop).",
+  "type": "module",
+  "bin": {
+    "godot-playtest": "bin/godot-playtest.mjs"
+  },
+  "files": [
+    "src",
+    "bin",
+    "godot",
+    "addons",
+    "skills",
+    "docs",
+    "*.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "install-browser": "playwright install chromium",
+    "test": "node --test \"test/*.test.mjs\"",
+    "validate": "node src/run_scenario.mjs --validate",
+    "prepublishOnly": "npm test"
+  },
+  "dependencies": {
+    "playwright": "1.62.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bshare/godot-playtest-harness.git"
+  },
+  "homepage": "https://github.com/bshare/godot-playtest-harness#readme",
+  "bugs": {
+    "url": "https://github.com/bshare/godot-playtest-harness/issues"
+  },
+  "keywords": [
+    "godot",
+    "godot4",
+    "playtest",
+    "game-testing",
+    "testing",
+    "playwright",
+    "web-export",
+    "automation",
+    "qa",
+    "agent"
+  ]
+}

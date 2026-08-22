@@ -1,0 +1,19 @@
+{
+	"name": "reach_object_dialogue",
+	"stop_on_failure": true,
+	"steps": [
+		{ "action": "dump_state", "label": "boot" },
+		{ "action": "force_teleport_player", "args": { "cell_x": 7, "cell_y": 4 } },
+		{ "action": "wait", "ms": 200 },
+		{ "action": "move_player", "args": { "direction": "right" }, "screenshot_after": true },
+		{ "action": "wait", "ms": 500 },
+		{ "action": "dump_state", "label": "bumped_object" },
+		{ "action": "assert_state", "args": { "path": "dialogue.visible", "op": "==", "value": true }, "label": "dialogue_opened" },
+		{ "action": "assert_state", "args": { "path": "dialogue.text", "op": "==", "value": "Just a key..." }, "label": "dialogue_text_matches" },
+		{ "action": "advance_dialogue", "screenshot_after": true },
+		{ "action": "wait", "ms": 300 },
+		{ "action": "dump_state", "label": "after_advance" },
+		{ "action": "assert_state", "args": { "path": "dialogue.visible", "op": "==", "value": false }, "label": "dialogue_closed" },
+		{ "action": "assert_state", "args": { "path": "player.active", "op": "==", "value": true }, "label": "player_regains_control" }
+	]
+}

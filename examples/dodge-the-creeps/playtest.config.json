@@ -1,0 +1,8 @@
+{
+	"game": "dodge_the_creeps",
+	"action_catalog": "playtest.actions.json",
+	"build_dir": "build/web-debug",
+	"runs_dir": "runs",
+	"port": 8071,
+	"boot_sequence": []
+}

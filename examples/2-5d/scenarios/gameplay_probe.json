@@ -1,0 +1,19 @@
+{
+  "name": "gameplay_probe",
+  "note": "Manual probe: exercise press_action on the demo's own InputMap actions (move_forward, jump) since dump_controls is thin for this game (just a hint label).",
+  "stop_on_failure": true,
+  "steps": [
+    { "action": "screenshot", "label": "before" },
+    { "action": "dump_state", "label": "state_before" },
+    { "action": "press_action", "args": { "action_name": "move_forward", "pressed": true }, "label": "press_forward", "expect": "success" },
+    { "action": "wait", "ms": 800 },
+    { "action": "press_action", "args": { "action_name": "move_forward", "pressed": false }, "label": "release_forward", "expect": "success" },
+    { "action": "screenshot", "label": "after_walk" },
+    { "action": "dump_state", "label": "state_after_walk" },
+    { "action": "press_action", "args": { "action_name": "jump", "pressed": true }, "label": "press_jump", "expect": "success" },
+    { "action": "wait", "ms": 100 },
+    { "action": "press_action", "args": { "action_name": "jump", "pressed": false }, "label": "release_jump", "expect": "success" },
+    { "action": "wait", "ms": 400 },
+    { "action": "screenshot", "label": "after_jump" }
+  ]
+}

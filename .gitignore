@@ -1,0 +1,12 @@
+# Run output NEVER belongs in git. The predecessor project committed 194MB of
+# playtest screenshots and 264MB of generated art before anyone noticed; this
+# file exists from commit one specifically so that cannot recur here.
+runs/
+reports/
+screenshots/
+*.png
+*.webp
+*.jpg
+
+node_modules/
+.DS_Store

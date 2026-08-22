@@ -1,0 +1,19 @@
+{
+	"name": "smoke",
+	"stop_on_failure": true,
+	"steps": [
+		{ "action": "dump_state", "label": "boot" },
+		{ "action": "assert_state", "args": { "path": "run.state", "op": "==", "value": "IDLE" }, "label": "starts_idle" },
+		{ "action": "start_game", "screenshot_after": true },
+		{ "action": "wait", "ms": 3000 },
+		{ "action": "dump_state", "label": "playing" },
+		{ "action": "assert_state", "args": { "path": "run.state", "op": "==", "value": "IN_PROGRESS" }, "label": "is_playing" },
+		{ "action": "assert_state", "args": { "path": "run.score", "op": ">=", "value": 1 }, "label": "score_ticked" },
+		{ "action": "assert_state", "args": { "path": "player.visible", "op": "==", "value": true }, "label": "player_alive" },
+		{ "action": "force_hit", "screenshot_after": true },
+		{ "action": "wait", "ms": 1000 },
+		{ "action": "dump_state", "label": "after_hit" },
+		{ "action": "assert_state", "args": { "path": "player.visible", "op": "==", "value": false }, "label": "player_dead" },
+		{ "action": "assert_state", "args": { "path": "run.state", "op": "==", "value": "IDLE" }, "label": "run_ended" }
+	]
+}

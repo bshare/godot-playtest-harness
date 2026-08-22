@@ -1,0 +1,12 @@
+{
+  "catalog_version": 1,
+  "game": "2.5D Demo with GDScript",
+  "note": "The generic-bridge actions are runner built-ins; do NOT re-declare them here — a catalog entry shadows the built-in and dump_controls loses its payload. This catalog is for the game's own semantic actions.",
+  "actions": {},
+  "state_independent": [
+    "dump_controls",
+    "dump_state",
+    "screenshot"
+  ],
+  "runner_actions": {}
+}

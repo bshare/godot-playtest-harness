@@ -1,0 +1,44 @@
+{
+  "name": "movement",
+  "note": "Exercises press_action (movement + jump, press AND release) and send_key (raw space for jump) on a 3D UI-less game. The generic fallback dump_state cannot see player position, so before/after screenshots are the only evidence available that anything happened.",
+  "stop_on_failure": false,
+  "steps": [
+    { "action": "dump_state", "label": "initial" },
+    { "action": "screenshot", "label": "before_move" },
+
+    { "action": "press_action", "args": { "action_name": "move_forward", "pressed": true }, "expect": "success" },
+    { "action": "wait", "ms": 1500 },
+    { "action": "screenshot", "label": "after_move_forward_held" },
+    { "action": "press_action", "args": { "action_name": "move_forward", "pressed": false }, "expect": "success" },
+
+    { "action": "wait", "ms": 300 },
+    { "action": "screenshot", "label": "after_move_forward_released" },
+
+    { "action": "press_action", "args": { "action_name": "move_right", "pressed": true }, "expect": "success" },
+    { "action": "wait", "ms": 1200 },
+    { "action": "press_action", "args": { "action_name": "move_right", "pressed": false }, "expect": "success" },
+    { "action": "screenshot", "label": "after_move_right" },
+
+    { "action": "press_action", "args": { "action_name": "jump", "pressed": true }, "expect": "success" },
+    { "action": "wait", "ms": 150 },
+    { "action": "screenshot", "label": "mid_jump" },
+    { "action": "press_action", "args": { "action_name": "jump", "pressed": false }, "expect": "success" },
+    { "action": "wait", "ms": 600 },
+    { "action": "screenshot", "label": "after_jump_land" },
+
+    { "action": "send_key", "args": { "keycode": 32, "pressed": true }, "expect": "success" },
+    { "action": "wait", "ms": 150 },
+    { "action": "send_key", "args": { "keycode": 32, "pressed": false }, "expect": "success" },
+    { "action": "wait", "ms": 600 },
+    { "action": "screenshot", "label": "after_send_key_jump" },
+
+    { "action": "press_action", "args": { "action_name": "reset_position", "pressed": true }, "expect": "success" },
+    { "action": "wait", "ms": 200 },
+    { "action": "press_action", "args": { "action_name": "reset_position", "pressed": false }, "expect": "success" },
+    { "action": "screenshot", "label": "after_reset" },
+
+    { "action": "press_action", "args": { "action_name": "no_such_action", "pressed": true }, "expect": "refused", "expect_reason": "no InputMap action named 'no_such_action'" },
+
+    { "action": "dump_state", "label": "final" }
+  ]
+}

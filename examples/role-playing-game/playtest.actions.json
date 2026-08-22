@@ -1,0 +1,64 @@
+{
+	"catalog_version": 1,
+	"game": "jrpg_demo",
+	"state_schema_version": 1,
+	"actions": {
+		"move_player": {
+			"fn": "godotDebugMovePlayer",
+			"positional": [
+				{ "name": "direction" }
+			],
+			"required": ["direction"],
+			"optional": []
+		},
+		"advance_dialogue": {
+			"fn": "godotDebugAdvanceDialogue",
+			"positional": [],
+			"required": [],
+			"optional": []
+		},
+		"combat_attack": {
+			"fn": "godotDebugCombatAttack",
+			"positional": [],
+			"required": [],
+			"optional": []
+		},
+		"combat_defend": {
+			"fn": "godotDebugCombatDefend",
+			"positional": [],
+			"required": [],
+			"optional": []
+		},
+		"combat_flee": {
+			"fn": "godotDebugCombatFlee",
+			"positional": [],
+			"required": [],
+			"optional": []
+		},
+		"force_win_combat": {
+			"fn": "godotDebugForceWinCombat",
+			"positional": [],
+			"required": [],
+			"optional": []
+		},
+		"force_teleport_player": {
+			"fn": "godotDebugForceTeleportPlayer",
+			"positional": [
+				{ "name": "cell_x" },
+				{ "name": "cell_y" }
+			],
+			"required": ["cell_x", "cell_y"],
+			"optional": []
+		},
+		"legal_moves": {
+			"fn": "godotDebugLegalMoves",
+			"positional": [],
+			"required": [],
+			"optional": []
+		}
+	},
+	"runner_actions": {
+		"dump_state": { "required": [], "optional": [] },
+		"screenshot": { "required": [], "optional": [] }
+	}
+}

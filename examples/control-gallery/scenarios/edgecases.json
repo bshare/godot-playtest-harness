@@ -1,0 +1,9 @@
+{
+  "name": "edgecases",
+  "steps": [
+    { "action": "dump_controls", "label": "before" },
+    { "action": "click_control", "args": { "path": "/root/ControlGallery/MainPanel/HSplitContainer/BasicControls/VBoxContainer/TabContainer/Tab 3/MarginContainer/RichTextLabel" } },
+    { "action": "click_control", "args": { "path": "/root/ControlGallery/MainPanel/HSplitContainer/VSplitContainer/Lists/VBoxContainer/HBoxContainer/VBoxContainer2/FoldableContainer2" } },
+    { "action": "dump_controls", "label": "after_fold_click", "screenshot_after": true }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "click_probe",
+  "note": "Manual probe for viewport-stretch click_control validation. Not part of the harness's own test suite.",
+  "stop_on_failure": false,
+  "steps": [
+    { "action": "dump_controls", "label": "before" },
+    { "action": "screenshot", "label": "before" },
+    { "action": "click_control", "args": { "path": "/root/PaintRoot/ToolsPanel/ButtonToolEraser" }, "label": "click_eraser", "expect": "success" },
+    { "action": "dump_controls", "label": "after_eraser" },
+    { "action": "screenshot", "label": "after_eraser" },
+    { "action": "click_control", "args": { "path": "/root/PaintRoot/ToolsPanel/ButtonToolCircle" }, "label": "click_circle", "expect": "success" },
+    { "action": "dump_controls", "label": "after_circle" },
+    { "action": "click_control", "args": { "path": "/root/PaintRoot/ToolsPanel/BrushSettings/ButtonShapeBox" }, "label": "click_shapebox", "expect": "success" },
+    { "action": "dump_controls", "label": "after_shapebox" },
+    { "action": "screenshot", "label": "after_shapebox" },
+    { "action": "set_slider", "args": { "path": "/root/PaintRoot/ToolsPanel/BrushSettings/HScrollBarBrushSize", "value": 5 }, "label": "slider_set", "expect": "success" },
+    { "action": "dump_controls", "label": "after_slider" },
+    { "action": "screenshot", "label": "after_slider" }
+  ]
+}
