@@ -100,6 +100,36 @@ export async function settleBridgeVar(page, varName, { timeoutMs = BRIDGE_SETTLE
 	}
 }
 
+// The 30s bridge-ready timeout has two very different causes, and for a year
+// the error diagnosed only one of them. "Wrong build" (a RELEASE export, or a
+// stale web-debug/) really is the common case — but a game that EXPORTS fine
+// and cannot BOOT (no run/main_scene in project.godot, a startup script
+// error) produces the identical timeout, and the old message sent that reader
+// re-exporting a build that was never the problem. The page's own console
+// errors are already captured (they land in manifest.console_errors); a boot
+// crash names itself there, so the message must carry them. Exported and pure
+// so the suite can pin the message without a browser.
+export function readyTimeoutMessage(consoleErrors, cause) {
+	let msg =
+		`DebugBridge never registered within 30s. Either the page loaded a build WITHOUT the bridge — ` +
+		`a RELEASE export (build/web/ instead of build/web-debug/), or a stale build/web-debug/ from ` +
+		`before DebugBridge existed; re-export with: ` +
+		`"$GODOT" --headless --export-debug "Web" "build/web-debug/index.html" — or the game itself ` +
+		`FAILED TO BOOT: no run/main_scene set in project.godot (the export still succeeds), or a ` +
+		`script error at startup.`;
+	if (consoleErrors.length > 0) {
+		const shown = consoleErrors.slice(0, 5);
+		msg += ` The page logged ${consoleErrors.length} console error(s), which usually name the real cause:\n` +
+			shown.map((e) => `  - ${e.text}`).join("\n");
+		if (consoleErrors.length > shown.length) {
+			msg += `\n  ...and ${consoleErrors.length - shown.length} more (all of them are in the manifest's console_errors)`;
+		}
+	} else {
+		msg += ` The page logged no console errors, which points at the wrong-build cause rather than a boot crash.`;
+	}
+	return msg + ` (original: ${cause.message})`;
+}
+
 function waitForServer(url, timeoutMs = 5000) {
 	const deadline = Date.now() + timeoutMs;
 	return new Promise((resolve, reject) => {
@@ -229,11 +259,7 @@ export function createBrowserTransport() {
 			try {
 				await page.waitForFunction((f) => typeof window[f] === "function", cfg.stateFn, { timeout: 30000 });
 			} catch (err) {
-				throw new Error(
-					`DebugBridge never registered within 30s. Almost always this means the page loaded a build ` +
-					`WITHOUT the bridge: a RELEASE export (build/web/ instead of build/web-debug/), or a stale ` +
-					`build/web-debug/ from before DebugBridge existed. Re-export with: ` +
-					`"$GODOT" --headless --export-debug "Web" "build/web-debug/index.html" (original: ${err.message})`);
+				throw new Error(readyTimeoutMessage(consoleErrors, err));
 			}
 		},
 

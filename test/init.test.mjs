@@ -111,6 +111,41 @@ test("parseProjectGodot reads config/name and the 4.x feature string", () => {
     assert.equal(noFeatures.version, null);
 });
 
+test("a project without run/main_scene gets a needs-you warning — it exports fine and then cannot boot", () => {
+    // Verified live during release E2E: run/main_scene unset, export green,
+    // then every run dies 30s later with "DebugBridge never registered" and a
+    // diagnosis pointing at the build. init is where the fix costs one click.
+    const ws = makeWorkspace();
+    try {
+        const noScene = PROJECT_GODOT.replace('run/main_scene="res://main.tscn"\n', "");
+        assert.ok(!noScene.includes("main_scene"), "fixture must actually lack the line");
+        const dir = makeGame(ws, "game", { projectGodot: noScene });
+        const r = runInit({ projectDir: dir });
+        assert.equal(r.ok, true, "a missing main scene is a warning, not a refusal — init's files are all still right");
+        const step = stepById(r, "main_scene");
+        assert.equal(step.status, "needs-you");
+        assert.ok(step.detail.includes("run/main_scene"), "must name the missing setting");
+        assert.ok(step.detail.includes("DebugBridge never registered"), "must connect it to the run-time symptom it causes");
+        assert.ok(r.nextSteps.some((s) => s.includes("run/main_scene")), "and the fix must be in the next-steps list");
+
+        // An EMPTY main_scene is the same fresh-project state, spelled differently.
+        const empty = makeGame(ws, "empty-scene", {
+            projectGodot: PROJECT_GODOT.replace('run/main_scene="res://main.tscn"', 'run/main_scene=""'),
+        });
+        assert.equal(stepById(runInit({ projectDir: empty, dryRun: true }), "main_scene").status, "needs-you");
+    } finally { rmSync(ws, { recursive: true, force: true }); }
+});
+
+test("a project WITH a main scene gets no main_scene step at all", () => {
+    const ws = makeWorkspace();
+    try {
+        const dir = makeGame(ws, "game"); // the default fixture has run/main_scene
+        const r = runInit({ projectDir: dir });
+        assert.equal(stepById(r, "main_scene"), undefined, "no warning to read means nothing to check");
+        assert.ok(!r.nextSteps.some((s) => s.includes("run/main_scene")));
+    } finally { rmSync(ws, { recursive: true, force: true }); }
+});
+
 test("missing config/features becomes a needs-you detection step, not a crash", () => {
     const ws = makeWorkspace();
     try {

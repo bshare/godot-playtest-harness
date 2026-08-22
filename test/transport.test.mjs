@@ -659,6 +659,67 @@ test("settleBridgeVar returns null — never a stale value — when nothing is w
 });
 
 // ---------------------------------------------------------------------------
+// The browser bridge-ready timeout message
+// ---------------------------------------------------------------------------
+//
+// The 30s timeout has two very different causes — a build without the bridge,
+// and a game that failed to boot (no run/main_scene, a startup script error).
+// The old message diagnosed only the first, and sent a reader whose game
+// couldn't boot off re-exporting a build that was never the problem (found
+// live during release E2E: run/main_scene unset, export green, timeout).
+// readyTimeoutMessage is pure exactly so this suite can pin the diagnosis
+// without a browser.
+
+test("the ready timeout names BOTH causes, not just the wrong-build one", async () => {
+	const { readyTimeoutMessage } = await import("../src/transport/browser.mjs");
+	const msg = readyTimeoutMessage([], new Error("waitForFunction: Timeout 30000ms exceeded."));
+	assert.match(msg, /RELEASE export/, "the wrong-build cause must survive");
+	assert.match(msg, /--export-debug/, "and its fix, the re-export command");
+	assert.match(msg, /FAILED TO BOOT/i, "the failed-boot cause must be named");
+	assert.match(msg, /run\/main_scene/, "with its most-verified instance: no main scene set");
+	assert.match(msg, /original: waitForFunction: Timeout 30000ms exceeded\./,
+		"the underlying Playwright error must still be carried");
+});
+
+test("captured console errors are surfaced in the timeout — they name the real cause", async () => {
+	const { readyTimeoutMessage } = await import("../src/transport/browser.mjs");
+	const errors = [
+		{ text: "Failed to load resource: the server responded with a status of 404", timestamp: "t" },
+		{ text: "Error: Couldn't load project data at path \".\"", timestamp: "t", source: "pageerror" },
+	];
+	const msg = readyTimeoutMessage(errors, new Error("timeout"));
+	assert.match(msg, /2 console error/, "the count must be stated");
+	assert.match(msg, /404/, "each captured error's text must appear");
+	assert.match(msg, /Couldn't load project data/);
+});
+
+test("a flood of console errors is capped, pointing at the manifest for the rest", async () => {
+	const { readyTimeoutMessage } = await import("../src/transport/browser.mjs");
+	const errors = Array.from({ length: 9 }, (_, i) => ({ text: `boom ${i}`, timestamp: "t" }));
+	const msg = readyTimeoutMessage(errors, new Error("timeout"));
+	assert.match(msg, /boom 4/, "the first five must appear");
+	assert.doesNotMatch(msg, /boom 5/, "the sixth must not — a WebGL context loss can log hundreds");
+	assert.match(msg, /and 4 more/, "the overflow must be counted");
+	assert.match(msg, /console_errors/, "and the manifest field holding all of them must be named");
+});
+
+test("with NO console errors, the message says so — silence points at the wrong build", async () => {
+	const { readyTimeoutMessage } = await import("../src/transport/browser.mjs");
+	const msg = readyTimeoutMessage([], new Error("timeout"));
+	assert.match(msg, /no console errors/i,
+		"a clean console is itself a diagnostic: a boot crash would have logged something");
+});
+
+test("waitReady actually routes its timeout through readyTimeoutMessage with the live error array", () => {
+	// STATIC: driving a real 30s Playwright timeout is not something this suite
+	// can afford. What is pinned is the wiring — a beautiful message a code path
+	// never reaches diagnoses nothing.
+	const src = readFileSync(path.join(ROOT, "src", "transport", "browser.mjs"), "utf8");
+	assert.match(src, /throw new Error\(readyTimeoutMessage\(consoleErrors, err\)\)/,
+		"the timeout must be built from the SAME consoleErrors array the page.on handlers fill");
+});
+
+// ---------------------------------------------------------------------------
 // Odds and ends
 // ---------------------------------------------------------------------------
 

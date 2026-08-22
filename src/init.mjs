@@ -52,8 +52,11 @@ const PORT_RANGE = { first: 8060, last: 8079 };
 // ---------------------------------------------------------------------------
 
 /**
- * Pulls config/name and the 4.x feature string out of project.godot text.
- * Returns { name, version } with null for whichever is absent. Deliberately
+ * Pulls config/name, the 4.x feature string, and run/main_scene out of
+ * project.godot text.
+ * Returns { name, version, mainScene } with null for whichever is absent
+ * (an empty main_scene string counts as absent — that is exactly what a
+ * fresh project that never picked a main scene looks like). Deliberately
  * regex-level, not a full INI parser: these are single well-known lines, and
  * a parser that normalizes the file is exactly what the surgical-edit rule
  * forbids ever writing back.
@@ -67,7 +70,9 @@ export function parseProjectGodot(source) {
             if (/^4\.\d+/.test(q[1])) { version = q[1]; break; }
         }
     }
-    return { name: nameMatch ? nameMatch[1] : null, version };
+    const sceneMatch = source.match(/^run\/main_scene="((?:[^"\\]|\\.)*)"/m);
+    const mainScene = sceneMatch && sceneMatch[1] !== "" ? sceneMatch[1] : null;
+    return { name: nameMatch ? nameMatch[1] : null, version, mainScene };
 }
 
 // ---------------------------------------------------------------------------
@@ -312,7 +317,7 @@ export function runInit({ projectDir, harnessRoot = HARNESS_ROOT, dryRun = false
         return { ok: false, exitCode: 2, steps, nextSteps, refusals: [], hardErrors: [] };
     }
     const projectGodotSource = readFileSync(projectGodotPath, "utf8");
-    const { name: configName, version } = parseProjectGodot(projectGodotSource);
+    const { name: configName, version, mainScene } = parseProjectGodot(projectGodotSource);
     const gameName = configName ?? path.basename(project);
     if (version) {
         steps.push({ id: "detect", status: "did", detail: `Godot ${version} project "${gameName}" at ${project}` });
@@ -322,6 +327,22 @@ export function runInit({ projectDir, harnessRoot = HARNESS_ROOT, dryRun = false
             detail: `project "${gameName}" found, but no 4.x version string in config/features — ` +
                 `this harness targets Godot 4.x (the addon uses JavaScriptBridge; 3.x has a different singleton). Confirm the engine version.`,
         });
+    }
+
+    // A project without a main scene EXPORTS successfully and then cannot
+    // boot: the run dies 30s later with "DebugBridge never registered", a
+    // message whose most likely cause is a wrong build, not this. Caught here,
+    // where the fix is one editor click, instead of at run time. (Verified
+    // live during release E2E: run/main_scene unset, export green, timeout.)
+    if (!mainScene) {
+        steps.push({
+            id: "main_scene", status: "needs-you",
+            detail: "project.godot has no run/main_scene — the web export will still SUCCEED, but the exported game " +
+                "cannot boot, and every run dies 30s later with \"DebugBridge never registered\". Set the main scene " +
+                "in the editor (Project > Project Settings > Application > Run), or right-click a scene in the " +
+                "FileSystem dock > Set as Main Scene.",
+        });
+        nextSteps.push("Set run/main_scene in project.godot (see the main_scene warning above) — without it the exported game cannot boot.");
     }
 
     // Conflicts are collected first so one refusal message can name them all.
