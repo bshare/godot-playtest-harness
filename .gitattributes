@@ -1,4 +1,12 @@
+# LF in the repo and the working tree, on every platform — this is a Node +
+# Godot project and both are LF-native; without this, a Windows clone churns
+# CRLF warnings on every commit.
 * text=auto eol=lf
+*.png binary
+*.webp binary
+*.jpg binary
+*.wav binary
+*.ogg binary
 
 # Asset Library downloads use GitHub's archive, which honors export-ignore:
 # ship only the addon, not the whole harness repo.
